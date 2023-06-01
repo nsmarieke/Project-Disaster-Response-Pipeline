@@ -5,8 +5,13 @@ import re
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem.wordnet import WordNetLemmatizer
-nltk.download(['punkt', 'wordnet'])
-
+nltk.download(['punkt', 'wordnet', 'omw-1.4'])
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.metrics import classification_report
 
 def load_data(database_filepath):
     '''
@@ -56,11 +61,18 @@ def tokenize(text):
 
 
 def build_model():
-    pass
+    pipeline = Pipeline([
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer()),
+        ('clf', MultiOutputClassifier(MLPClassifier()))
+    ])
+
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    y_pred = model.predict(X_test)
+    classification_report(Y_test, y_pred, target_names=category_names)
 
 
 def save_model(model, model_filepath):
