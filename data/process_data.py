@@ -1,8 +1,23 @@
 import sys
+import pandas as pd
 
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    ''''
+    Function to load the data
+
+    args: 
+        - messages_filepath: filepath to find the message data
+        - categories_filepath: filepath to find the categories data
+
+    return:
+        - messages: the messages dataset
+        - categories: the categories dataset
+    '''
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+
+    return messages, categories
 
 
 def clean_data(df):
