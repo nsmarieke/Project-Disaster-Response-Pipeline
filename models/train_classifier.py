@@ -1,8 +1,30 @@
 import sys
+from sqlalchemy import create_engine
+import pandas as pd
 
 
 def load_data(database_filepath):
-    pass
+    '''
+    Load data from database and split in X and Y 
+
+    args:
+        - database_filepath: path to the data
+    
+    returns:
+        - X: input variable
+        - Y: output variables
+        - category_names: names of the output variables
+    '''
+    # Load data
+    engine = create_engine('sqlite:///../data/DisasterResponse.db')
+    df = pd.read_sql_table("DisasterResponse.db", engine)
+
+    # X and Y and category names
+    X = df['message']
+    Y = df.drop(['id', 'message', 'original', 'genre'], axis=1)
+    category_names = Y.columns
+
+    return X, Y, category_names
 
 
 def tokenize(text):
