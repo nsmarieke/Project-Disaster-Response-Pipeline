@@ -4,20 +4,23 @@ import pandas as pd
 
 def load_data(messages_filepath, categories_filepath):
     ''''
-    Function to load the data
+    Function to load the datasets and merge the two datasets together
 
-    args: 
+    Args: 
         - messages_filepath: filepath to find the message data
         - categories_filepath: filepath to find the categories data
 
-    return:
-        - messages: the messages dataset
-        - categories: the categories dataset
+    Returns:
+        - df: concatenated dataframe 
     '''
+    # Load messages and categories dataframe
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
 
-    return messages, categories
+    # Merge datasets
+    df = messages.merge(categories, on='id')
+
+    return df
 
 
 def clean_data(df):
