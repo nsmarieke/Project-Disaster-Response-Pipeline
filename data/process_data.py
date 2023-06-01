@@ -24,7 +24,39 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
-    pass
+    '''
+    Clean the dataframe:
+        - Making new category columns from the categories column
+        - Drop duplicates
+
+    args:
+        - df: dataframe to be cleaned
+
+    returns:
+        - df: cleaned dataframe
+    '''
+    # Split categories in separate dummy category columns and add column names
+    categories = df['categories'].str.split(';', expand=True)
+
+    row = categories.iloc[0]
+    category_colnames = row.str.split('-', expand=True)[0]
+    categories.columns = category_colnames
+
+    for column in categories:
+        # set each value to be the last character of the string
+        categories[column] = categories[column].str.split('-', expand=True)[1]
+    
+        # convert column from string to numeric
+        categories[column] = pd.to_numeric(categories[column])
+
+    # Replace categories column with the new category columns
+    df = df.drop('categories', axis=1)
+    df = pd.concat([df, categories], axis=1)
+
+    # Remove duplicates
+    df = df.drop_duplicates()
+
+    return df
 
 
 def save_data(df, database_filename):
