@@ -1,6 +1,11 @@
 import sys
 from sqlalchemy import create_engine
 import pandas as pd
+import re
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.stem.wordnet import WordNetLemmatizer
+nltk.download(['punkt', 'wordnet'])
 
 
 def load_data(database_filepath):
@@ -28,7 +33,26 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
-    pass
+    '''
+    Normalize, tokenize and lemmatize the given text
+
+    Args:
+        - text: The input text
+
+    Returns:
+        - lemmed: processed words from the input text
+    '''
+    # Normalize data
+    text = text.lower()
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text) 
+    
+    # Tokenize text by word
+    words = word_tokenize(text)
+    
+    # Lemmatize the words
+    lemmed = [WordNetLemmatizer().lemmatize(w) for w in words]
+    
+    return lemmed
 
 
 def build_model():
