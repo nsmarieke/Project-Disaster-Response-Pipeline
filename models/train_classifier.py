@@ -12,6 +12,8 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics import classification_report
+from sklearn.model_selection import GridSearchCV
+import pickle
 
 def load_data(database_filepath):
     '''
@@ -26,7 +28,7 @@ def load_data(database_filepath):
         - category_names: names of the output variables
     '''
     # Load data
-    engine = create_engine('sqlite:///../data/DisasterResponse.db')
+    engine = create_engine('sqlite:///data/DisasterResponse.db')
     df = pd.read_sql_table("DisasterResponse.db", engine)
 
     # X and Y and category names
@@ -61,22 +63,53 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+    Builds pipeline
+
+    Args:
+        None
+    
+    Returns:
+        pipeline
+    '''
     pipeline = Pipeline([
-        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('vect', CountVectorizer()),
         ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(MLPClassifier()))
+        ('mlpc', MultiOutputClassifier(MLPClassifier()))
     ])
 
     return pipeline
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    '''
+    Evaluates model
+    
+    Args:
+        model: pipeline
+        X_test: test input variable
+        Y_test: test output variable
+        category_names: names of the categories
+    
+    Returns:
+        None
+    '''
     y_pred = model.predict(X_test)
     classification_report(Y_test, y_pred, target_names=category_names)
 
 
 def save_model(model, model_filepath):
-    pass
+    '''
+    Saves model
+    
+    Args:
+        model: model
+        model_filepath: path where the model is saved
+
+    Returns:
+        None
+    '''
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
