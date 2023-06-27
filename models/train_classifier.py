@@ -13,6 +13,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
 import pickle
 
 def load_data(database_filepath):
@@ -29,7 +30,8 @@ def load_data(database_filepath):
     '''
     # Load data
     engine = create_engine('sqlite:///data/DisasterResponse.db')
-    df = pd.read_sql_table("DisasterResponse.db", engine)
+    print(engine.has_table)
+    df = pd.read_sql_table("data/DisasterResponse.db", engine)
 
     # X and Y and category names
     X = df['message']
@@ -73,9 +75,9 @@ def build_model():
         pipeline
     '''
     pipeline = Pipeline([
-        ('vect', CountVectorizer()),
+        ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('mlpc', MultiOutputClassifier(MLPClassifier()))
+        ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=10)))
     ])
 
     return pipeline

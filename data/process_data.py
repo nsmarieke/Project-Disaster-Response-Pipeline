@@ -50,12 +50,16 @@ def clean_data(df):
         # convert column from string to numeric
         categories[column] = pd.to_numeric(categories[column])
 
+
     # Replace categories column with the new category columns
     df = df.drop('categories', axis=1)
     df = pd.concat([df, categories], axis=1)
 
     # Remove duplicates
     df = df.drop_duplicates()
+
+    for column in categories:
+        df = df[df[column]!=2]
 
     return df
 
