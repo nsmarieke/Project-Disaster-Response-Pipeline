@@ -9,7 +9,6 @@ nltk.download(['punkt', 'wordnet', 'omw-1.4'])
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
@@ -29,9 +28,8 @@ def load_data(database_filepath):
         - category_names: names of the output variables
     '''
     # Load data
-    engine = create_engine('sqlite:///data/DisasterResponse.db')
-    print(engine.has_table)
-    df = pd.read_sql_table("data/DisasterResponse.db", engine)
+    engine = create_engine('sqlite:///{}'.format(database_filepath))
+    df = pd.read_sql_table('DisasterResponse.db', engine)
 
     # X and Y and category names
     X = df['message']
@@ -80,7 +78,15 @@ def build_model():
         ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=10)))
     ])
 
-    return pipeline
+    parameters = {
+        'clf__estimator__max_depth': (10, 20, 30),
+        'clf__estimator__n_estimators': (10, 20, 30),
+        'clf__estimator__min_samples_split': [2, 4, 6]
+    }
+
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=2)
+
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
