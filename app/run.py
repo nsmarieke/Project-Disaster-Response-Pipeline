@@ -27,7 +27,7 @@ def tokenize(text):
 
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
-df = pd.read_sql_table('DisasterResponse.db', engine)
+df = pd.read_sql_table('disasterResponse.db', engine)
 
 # load model
 model = joblib.load("../models/classifier.pkl")
@@ -38,13 +38,25 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/index')
 def index():
     
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # Count for genres
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+    total_counts = sum(genre_counts)
+    total_percentage_genre = genre_counts/total_counts
+
+    # Percentages for categories
+    total_categories = []
+    categories = []
+    for category in df.iloc[:,4:]:
+        total_category = df[category].sum()
+        total_categories.append(total_category)
+        categories.append(category)
+
+    total_categories_all = sum(total_categories)
+    total_percentage = total_categories/total_categories_all
+
     
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
@@ -58,6 +70,42 @@ def index():
                 'title': 'Distribution of Message Genres',
                 'yaxis': {
                     'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x= categories,
+                    y= total_percentage
+                )
+            ],
+
+            'layout': {
+                'title': 'Percentage of categories',
+                'yaxis': {
+                    'title': "Percentages"
+                },
+                'xaxis': {
+                    'title': "Categories"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x= genre_names,
+                    y= total_percentage_genre
+                )
+            ],
+
+            'layout': {
+                'title': 'Percentage of genre',
+                'yaxis': {
+                    'title': "Percentages"
                 },
                 'xaxis': {
                     'title': "Genre"
