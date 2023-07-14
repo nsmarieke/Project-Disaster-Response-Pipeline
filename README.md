@@ -25,3 +25,6 @@ The data that is loaded is the data saved in the ETL pipeline.
 1. Run the following command in the app's directory to run your web app:
     `python run.py`
 2. Go to http://0.0.0.0:3001/
+
+### Link to github
+https://github.com/nsmarieke/Project-Disaster-Response-Pipeline

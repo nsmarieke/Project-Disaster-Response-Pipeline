@@ -29,7 +29,7 @@ def load_data(database_filepath):
     '''
     # Load data
     engine = create_engine('sqlite:///{}'.format(database_filepath))
-    df = pd.read_sql_table('DisasterResponse.db', engine)
+    df = pd.read_sql_table('data/DisasterResponse.db', engine)
 
     # X and Y and category names
     X = df['message']
